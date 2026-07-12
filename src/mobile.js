@@ -3,7 +3,7 @@ import DOM from "./lib/dry-dom.js";
 
 import App from './App.js';
 import IStore from './store/IStore.js';
-import CordovaStore from "./store/Cordova.js";
+import ForageStore from "./store/Forage.js";
 import { Model, boot } from './lib/mvc.js';
 
 import CloudCompiler from './compilers/CloudCompiler.js';
@@ -13,9 +13,12 @@ import * as components from './components/*.js';
 
 DOM.create("script", {src:"cordova.js"}, document.head);
 
-document.addEventListener( "deviceready", () => {
+let started = false;
+function start(){
+    if( started ) return;
+    started = true;
 
-    bind(CordovaStore).to(IStore).singleton();
+    bind(ForageStore).to(IStore).singleton();
     bind(CloudCompiler).to('Compiler').singleton();
 
     class Dud {};
@@ -34,4 +37,7 @@ document.addEventListener( "deviceready", () => {
 	}
     });
 
-} );
+}
+
+document.addEventListener( "deviceready", start );
+document.addEventListener( "DOMContentLoaded", start );
