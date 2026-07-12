@@ -23,6 +23,7 @@ const fsApi = {
     readlinkSync: filePath => fs.readlinkSync(filePath),
     readFileSync: (filePath, encoding) => fs.readFileSync(filePath, encoding),
     unlinkSync: filePath => fs.unlinkSync(filePath),
+    renameSync: (oldPath, newPath) => fs.renameSync(oldPath, newPath),
     writeFileSync: (filePath, data) => fs.writeFileSync(filePath, data),
     watch: (filePath, callback) => {
         const watcher = fs.watch(filePath, callback);

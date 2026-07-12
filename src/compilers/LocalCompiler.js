@@ -135,6 +135,23 @@ class LocalCompiler {
 	    if( fallback ) main = fallback;
 	}
 
+	// Arduino CLI compiles a sketch directory and requires its primary .ino
+	// file to have the same name as that directory. Preserve projects that
+	// use another primary filename by temporarily adapting it during build.
+	let restoreSketch = null;
+	if( this.useCli ){
+	    let parts = lsp.split(/[\\/]+/);
+	    let folderName = parts[parts.length - 1];
+	    let expected = folderName + '.ino';
+	    let expectedPath = PATH.resolve(lsp, expected);
+	    let selectedPath = PATH.resolve(lsp, main);
+	    if( !fs.existsSync(expectedPath) && fs.existsSync(selectedPath) &&
+		selectedPath.toLowerCase() != expectedPath.toLowerCase() ){
+		fs.renameSync(selectedPath, expectedPath);
+		restoreSketch = _ => fs.renameSync(expectedPath, selectedPath);
+	    }
+	}
+
 	let args = this.useCli ? [ ...this.prefixArgs,
 	    'compile',
 	    '--fqbn', 'arduino:avr:leonardo',
@@ -146,6 +163,7 @@ class LocalCompiler {
 	    '--verify', PATH.resolve(lsp, main)
 	];
 	return runtime.spawn(this.compilerExec, args).then(result => {
+	    if( restoreSketch ) restoreSketch();
 	    let output = args.join(" ") + '\n' + result.stdout + result.stderr;
 	    if( result.code ) throw output;
 
