@@ -1,5 +1,6 @@
 appId: io.github.felipemanga.projectabe
 productName: ProjectABE
+icon: icon.png
 directories:
   output: ../dist-electron
 files:
