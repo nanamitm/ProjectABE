@@ -12,7 +12,7 @@ var gulp = require('gulp'),
     zip = require("gulp-zip"),
     sequence = require("gulp-sequence"),
     reload = require("gulp-livereload"),
-    {execFile, execFileSync} = require("child_process");
+    {execFileSync} = require("child_process");
 
 var fs = require('fs');
 
@@ -111,39 +111,6 @@ function swallowError (error) {
   this.emit('end')
 }
 
-gulp.task('electron-build', function () {
-  var b = browserify({
-    entries: './src/pc.js',
-    debug: true
-  });
-
-  b.plugin(sourcemapify, {root:'../'});
-
-  b.transform(babelify, {
-      plugins:[
-        ["transform-class-properties"],
-        ["import-glob"]
-      ],
-      presets:[
-        ["env", {targets:{uglify:[]}}
-      ]
-  ]});
-
-  return b
-	.bundle()
-	.on("end", () => {
-	    asar.createPackage( './build', './dist/resources/app.asar', function() {
-	    reload.changed("app.asar");
-	    })
-	})
-    .pipe(fs.createWriteStream("build/app.js", {encoding:"UTF-8"}))
-	.on("error", swallowError);
-});
-
-// Keep the historical task name as an alias while Electron becomes the
-// supported desktop runtime.
-gulp.task('build', ['electron-build']);
-
 gulp.task('web-build', function () {
 
   var b = browserify({
@@ -224,13 +191,8 @@ gulp.task('cordova', function( cb ){
 
 gulp.task('android', sequence('clean', 'pg-copy', 'pg-move', 'pg-build', 'cordova'))
 
-gulp.task('watch', ['build', 'copy'], function(){
-    gulp.watch('./src/**/*', ['build']);
-    gulp.watch('./res/**/*', ['copy']);
-});
-
-gulp.task('electron-watch', ['electron-build', 'copy'], function(){
-    gulp.watch('./src/**/*', ['electron-build']);
+gulp.task('watch', ['web-build', 'copy'], function(){
+    gulp.watch('./src/**/*', ['web-build']);
     gulp.watch('./res/**/*', ['copy']);
 });
 
@@ -239,19 +201,4 @@ gulp.task('web-watch', ['web-build', 'copy'], function(){
     gulp.watch('./res/**/*', ['copy']);
 });
 
-gulp.task('electron-run', function(){
-  gulp.watch('./src/**/*', ['electron-build']);
-  gulp.watch('./res/**/*', ['copy']);
-
-  reload.listen();
-
-  execFile(require.resolve('electron/cli.js'), [
-    "electron.js"
-    ], {cwd:"build"}, (err, stdout, stderr)=>{
-      process.exit();
-    });
-})
-
-gulp.task('electron', sequence('clean', 'copy', 'electron-build'));
-gulp.task('run', ['electron-run']);
-gulp.task('default', sequence(['electron-build', 'copy'], 'electron-run'));
+gulp.task('default', ['web-build', 'copy']);

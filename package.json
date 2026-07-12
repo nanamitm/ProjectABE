@@ -7,7 +7,7 @@
     "test": "gulp test",
     "build:electron": "node scripts/build-electron.js",
     "test:electron": "npm run build:electron && node scripts/smoke-electron.js",
-    "watch:electron": "gulp electron-watch"
+    "watch:electron": "node scripts/watch-electron.js"
   },
   "dependencies": {
     "avrgirl-arduino": "^2.2.7",
