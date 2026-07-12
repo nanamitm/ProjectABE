@@ -9,6 +9,7 @@ import { Model, boot } from './lib/mvc.js';
 import * as entities from './entities/*.js';
 import * as components from './components/*.js';
 
+import CloudCompiler from './compilers/CloudCompiler.js';
 import Flasher from './flashers/AVRGirl.js';
 
 const runtime = window.projectabe || {};
@@ -19,6 +20,7 @@ const file = argv.find(arg => !/^--/.test(arg));
 document.addEventListener( "DOMContentLoaded", () => {
 
     bind(Store).to(IStore).singleton();
+    bind(CloudCompiler).to('Compiler').singleton();
 
 //    console.log( argv );
 
