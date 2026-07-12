@@ -34,7 +34,7 @@ document.addEventListener( "DOMContentLoaded", () => {
         components,
         entities,
         model:{
-	    proxy:"https://cors-anywhere.herokuapp.com/",
+	    proxy:"/api/cors?url=",
 	    ram:{
 		skin: (location.search.match(/[?&]skin=([^&]+)/)||[])[1],
 		autoRun: url,

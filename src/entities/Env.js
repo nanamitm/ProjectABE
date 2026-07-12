@@ -53,7 +53,7 @@ class Env extends IController {
 	this.activateRepo( repoName );
 
 	let proxy = this.model.getItem("proxy", "");
-	repoURL = (/^https?.*/.test(repoURL) ? proxy : "") + repoURL;
+	repoURL = (/^https?.*/.test(repoURL) ? proxy + encodeURIComponent(repoURL) : repoURL);
 
 	let age = (new Date()).valueOf() - this.model.getItem(["app", "repodata", repoName, "timestamp"], 0);
 	
@@ -252,10 +252,10 @@ class Env extends IController {
 
 	let github = url.match(/^https:\/\/raw.githubusercontent.com\/(.*)$/i);
 	if( github && proxy )
-	    finalURL = 'https://gitcdn.xyz/repo/' + github[1];
+	    finalURL = proxy + encodeURIComponent(url);
 	
 	if( !finalURL )
-	    finalURL = proxy + url;
+	    finalURL = proxy + encodeURIComponent(url);
 	
 	if( build || url == "null" ){
 	    
@@ -283,7 +283,7 @@ class Env extends IController {
 			return rsp.text();
 		    else if( finalURL != url && proxy ){
 			return new Promise((ok, nok) => {
-			    fetch( proxy + url )
+			    fetch( proxy + encodeURIComponent(url) )
 				.then( rsp => rsp.ok ? ok(rsp.text()) : nok("error") )
 				.catch( ex => nok(ex) );
 			});

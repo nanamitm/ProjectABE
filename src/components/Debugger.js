@@ -114,7 +114,7 @@ class Debugger {
 
 	if( /.*\.ino$/.test(srcurl) ){
 	    
-	    promise = fetch( this.model.getItem("app.proxy") + srcurl )
+	    promise = fetch( this.model.getItem("app.proxy") + encodeURIComponent(srcurl) )
 		.then( rsp => rsp.text() )
 		.then( txt => {
 
@@ -127,7 +127,7 @@ class Debugger {
 	    
 	}else if( srcurl ){
 
-	    promise = fetch( this.model.getItem("app.proxy") + srcurl )
+	    promise = fetch( this.model.getItem("app.proxy") + encodeURIComponent(srcurl) )
 		.then( rsp => rsp.arrayBuffer() )
 		.then( buff => JSZip.loadAsync( buff ) )
 		.then( z => this.importZipSourceFiles(z) );
