@@ -6,10 +6,10 @@ import loadImage from '../lib/image.js';
 
 let fs, path;
 
-if( window.require ){
+if( window.projectabe && window.projectabe.fs ){
     try{
-	fs = window.require('fs');
-	path = window.require('path');
+	fs = window.projectabe.fs;
+	path = window.projectabe.path;
     }catch(ex){}
 }
 

@@ -1,10 +1,10 @@
 
 let IStore = require('./IStore.js');
+var runtime = window.projectabe || {};
 
-if( window.require ){
+if( runtime.fs ){
 
-    var fs = window.require('fs');
-    var runtime = window.projectabe || {};
+    var fs = runtime.fs;
 
 }else{
 

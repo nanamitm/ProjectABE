@@ -11,8 +11,8 @@ import * as components from './components/*.js';
 
 import Flasher from './flashers/AVRGirl.js';
 
-const fs = window.require('fs');
 const runtime = window.projectabe || {};
+const fs = runtime.fs;
 const argv = runtime.argv || [];
 const file = argv.find(arg => !/^--/.test(arg));
 
