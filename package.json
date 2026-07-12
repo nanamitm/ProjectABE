@@ -17,7 +17,6 @@
     "dry-di": "^0.5.9",
     "electron": "43.0.0",
     "electron-builder": "26.15.3",
-    "electron-rebuild": "^1.7.3",
     "html5-fs": "^0.1.1",
     "isomorphic-fetch": "^2.2.1",
     "jszip": "^3.1.5",
@@ -25,7 +24,6 @@
     "minimist": "^1.2.0"
   },
   "devDependencies": {
-    "asar": "^0.14.0",
     "babel-plugin-import-glob": "^2.0.0",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-preset-env": "^1.5.2",
