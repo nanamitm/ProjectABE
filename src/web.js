@@ -13,7 +13,6 @@ import * as entities from './entities/*.js';
 import * as components from './components/*.js';
 
 document.addEventListener( "DOMContentLoaded", () => {
-setTimeout( function(){
 
     bind(Store).to(IStore).singleton();
     bind(CloudCompiler).to('Compiler').singleton();
@@ -49,5 +48,4 @@ setTimeout( function(){
 	}
     });
 
-}, 2000);
 } );
