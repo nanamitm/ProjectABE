@@ -422,8 +422,12 @@ void loop() {
 	if( current.startsWith(lsp) )
 	    shortCurrent = current.substr(lsp.length+1);
 	
-	let target = prompt("Rename " + shortCurrent + " to:", shortCurrent);
-	target = (target||"").trim();
+	if( typeof target !== "string" ){
+	    askText("Rename " + shortCurrent + " to:", shortCurrent)
+		.then(name => this.renameFile(name));
+	    return;
+	}
+	target = target.trim();
 	
 	if( target == "" || target == shortCurrent )
 	    return;
@@ -1691,7 +1695,7 @@ void loop() {
     
 };
 
-function askText(label){
+function askText(label, initial){
     return new Promise( resolve => {
 	let overlay = document.createElement('div');
 	overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:10000;display:flex;align-items:center;justify-content:center';
@@ -1701,6 +1705,7 @@ function askText(label){
 	overlay.appendChild(box);
 	document.body.appendChild(overlay);
 	let input = box.querySelector('input');
+	input.value = initial || '';
 	let finish = value => {
 	    overlay.remove();
 	    resolve(value && value.trim() || null);
