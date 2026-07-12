@@ -161,11 +161,11 @@ class LocalCompiler {
 
 	let args = this.useCli ? [ ...this.prefixArgs,
 	    'compile',
-	    '--fqbn', 'arduino:avr:leonardo',
+	    '--fqbn', this.model.getItem("ram.boardFQBN", "arduino:avr:leonardo"),
 	    '--build-path', lbp,
 	    lsp
 	] : [ ...this.prefixArgs,
-	    '--board', 'arduino:avr:leonardo',
+	    '--board', this.model.getItem("ram.boardFQBN", "arduino:avr:leonardo"),
 	    '--pref', 'build.path=' + lbp,
 	    '--verify', PATH.resolve(lsp, main)
 	];

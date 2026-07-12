@@ -29,6 +29,8 @@ class Debugger {
 	this.pool.add(this);
 	
 	this.DOM = DOM;
+	if( this.DOM.board )
+	    this.DOM.board.value = this.model.getItem("ram.boardFQBN", "arduino:avr:leonardo");
 	this.history = [];
 	this.da = [];
 	this.RAM = [];
@@ -240,6 +242,11 @@ void loop() {
 	this.DOM.element.setAttribute("hidden", "false");
 	this.DOM.element.setAttribute("data-tab", "source");
 	this.initSource();
+    }
+
+    changeBoard(){
+	if( this.DOM.board )
+	    this.model.setItem("ram.boardFQBN", this.DOM.board.value);
     }
 
     initEditor(){

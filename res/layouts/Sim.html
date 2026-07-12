@@ -53,6 +53,14 @@
 	</div>
 	<button click-call="renameFile" id="rename" title="Rename current file">Rename</button>
 	<button click-call="deleteFile" id="delete" title="Delete current file">Delete</button>
+	<label title="Arduino board used for Build">
+	  Board:
+	  <select id="board" change-call="changeBoard">
+	    <option value="arduino:avr:leonardo">Arduino Leonardo / Arduboy</option>
+	    <option value="arduino:avr:uno">Arduino Uno / Gamebuino</option>
+	    <option value="arduino:avr:micro">Arduino Micro</option>
+	  </select>
+	</label>
 	<button click-call="compile" id="compile" title="Ctrl+Enter">Build</button>
 	<button click-call="zip" title="Download source zip">Download</button>
       </div>
