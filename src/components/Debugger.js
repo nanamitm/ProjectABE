@@ -446,8 +446,6 @@ void loop() {
 	
 	let src = this.source.getItem([current]);
 
-	this.pool.call("saveFile", target, src);
-
 	if( this.local( file => {
 	    
 	    let del = _ => {
@@ -459,21 +457,27 @@ void loop() {
 		}
 	    };
 
-	    target = lsp + path.sep + target;
-	    
-	    let fulltarget = path.resolve( target );
+	    target = path.resolve( lsp, target );
+
 	    if( fs.existsSync(target) ){
 		alert("Error: New name not available");
 		return false;
 	    }
 
+	    let save = _ => {
+		let result = this.store.saveFile(target, src);
+		if( result ){
+		    alert("Unable to save: " + result);
+		    return false;
+		}
+		return true;
+	    };
+
 	    // if the only change was capitalization, delete first because of Windows / OS X
 	    if( target.toLowerCase() == shortCurrent.toLowerCase() ){
-		del();
-		save();
+		if( del() === false || save() === false ) return false;
 	    }else{
-		save();
-		del();
+		if( save() === false || del() === false ) return false;
 	    }
 
 	}) === false )
@@ -1271,7 +1275,9 @@ void loop() {
 	    this.saveHandles[filePath] = setTimeout( write.bind(this), 10000 );
 
 	function write( ){
-	    this.pool.call("saveFile", filePath, code);	    
+	    let result = this.store.saveFile(filePath, code);
+	    if( result )
+		console.error("Unable to save " + filePath + ":", result);
 	}
 	
     }
