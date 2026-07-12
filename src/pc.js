@@ -21,6 +21,7 @@ document.addEventListener( "DOMContentLoaded", () => {
 
     bind(Store).to(IStore).singleton();
     bind(LocalCompiler).to('Compiler').singleton();
+    bind(Flasher).to('Plugin').singleton();
 
 //    console.log( argv );
 

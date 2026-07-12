@@ -1,4 +1,4 @@
-var Avrgirl = self.require('avrgirl-arduino');
+var Avrgirl = self.require ? self.require('avrgirl-arduino') : null;
 
 var avrgirl = null;
 
@@ -12,6 +12,11 @@ class Flasher {
     }
 
     doFlash( tries ){
+	if( !Avrgirl ){
+	    alert("Uploading to an Arduboy is not available in this build.");
+	    return;
+	}
+
 	let ask = tries === undefined;
 	if( ask ) tries = 10;
 	

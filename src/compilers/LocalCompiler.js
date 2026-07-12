@@ -98,9 +98,9 @@ class LocalCompiler {
 	return this.compilerPath = found;
     }
 
-    async build( srcdata, main ){
+    build( srcdata, main ){
 	if( !this.findCompiler() )
-	    throw "No Arduino IDE found";
+	    return Promise.reject("No Arduino IDE found");
 
 	let lsp = this.model.getItem("ram.localSourcePath");
 	let lbp = this.model.getItem("ram.localBuildPath");
@@ -126,38 +126,40 @@ class LocalCompiler {
 	    '--pref', 'build.path=' + lbp,
 	    '--verify', PATH.resolve(lsp, main)
 	];
-	let result = await runtime.spawn(this.compilerExec, args);
-	let output = args.join(" ") + '\n' + result.stdout + result.stderr;
-	if( result.code ) throw output;
+	return runtime.spawn(this.compilerExec, args).then(result => {
+	    let output = args.join(" ") + '\n' + result.stdout + result.stderr;
+	    if( result.code ) throw output;
 
-	let hexpath, elfpath;
-	fs.readdirSync(lbp).forEach( file => {
-	    if( /.*\.hex$/i.test(file) && file.indexOf("with_bootloader") == -1 )
-		hexpath = file;
-	    else if( /.*\.elf$/i.test(file) )
-		elfpath = file;
-	});
-	if( !hexpath ) throw output + "\nNo HEX output found";
+	    let hexpath, elfpath;
+	    fs.readdirSync(lbp).forEach( file => {
+		if( /.*\.hex$/i.test(file) && file.indexOf("with_bootloader") == -1 )
+		    hexpath = file;
+		else if( /.*\.elf$/i.test(file) )
+		    elfpath = file;
+	    });
+	    if( !hexpath ) throw output + "\nNo HEX output found";
 
-	return this._disassemble({
-	    lbp,
-	    elfpath,
-	    hex: fs.readFileSync(PATH.resolve(lbp, hexpath), 'utf-8'),
-	    stdout: output
+	    return this._disassemble({
+		lbp,
+		elfpath,
+		hex: fs.readFileSync(PATH.resolve(lbp, hexpath), 'utf-8'),
+		stdout: output
+	    });
 	});
     }
 
-    async _disassemble( obj ){
-	if( this.useCli || !obj.elfpath ) return obj;
+    _disassemble( obj ){
+	if( this.useCli || !obj.elfpath ) return Promise.resolve(obj);
 
 	let elfpath = PATH.resolve(obj.lbp, obj.elfpath);
 	let cmd = PATH.resolve(this.compilerPath,
 	    ...'hardware/tools/avr/bin/avr-objdump'.split('/')) + this.compilerExt;
-	if( !fs.existsSync(cmd) ) return obj;
+	if( !fs.existsSync(cmd) ) return Promise.resolve(obj);
 
-	let result = await runtime.spawn(cmd, ['-dl', elfpath]);
-	if( !result.code ) obj.disassembly = result.stdout + result.stderr;
-	return obj;
+	return runtime.spawn(cmd, ['-dl', elfpath]).then(result => {
+	    if( !result.code ) obj.disassembly = result.stdout + result.stderr;
+	    return obj;
+	});
     }
 }
 
