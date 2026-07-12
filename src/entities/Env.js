@@ -156,6 +156,17 @@ class Env extends IController {
 	
     }
 
+    loadHexFile( name, text ){
+	this.model.removeItem("app.AT32u4");
+	this.model.removeItem("ram.srcpath");
+	let shortName = String(name || "project.hex").split(/[\\/]/).pop();
+	this.model.setItem('ram.srcpath', ["app", "sources", shortName]);
+	this.model.setItem("app.AT32u4.hex", text);
+	let source = this.model.getModel(this.model.getItem("ram.srcpath"), true);
+	source.setItem(["build.hex"], text);
+	this.pool.call("runSim");
+    }
+
     embed( dom, evt ){
 	if( !dom || !evt ) return;
 	let url = evt.target.dataset.url;

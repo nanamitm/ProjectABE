@@ -87,6 +87,13 @@ document.addEventListener( "DOMContentLoaded", () => {
 	}
     });
 
+    if( runtime.onOpenHex )
+	runtime.onOpenHex(filePath => {
+	    fs.readFile(filePath, "utf-8", (err, text) => {
+		if( !err ) app.pool.call("loadHexFile", filePath, text);
+	    });
+	});
+
     app.pool.add(new Flasher( app ));
 
 } );

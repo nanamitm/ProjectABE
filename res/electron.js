@@ -1,5 +1,5 @@
 const path = require('path');
-const {app, BrowserWindow, ipcMain, shell} = require('electron');
+const {app, BrowserWindow, ipcMain, shell, Menu, dialog} = require('electron');
 
 let mainWindow;
 
@@ -47,6 +47,25 @@ app.on('ready', function() {
     // fullscreen:true
     // frame:false
   });
+
+  Menu.setApplicationMenu(Menu.buildFromTemplate([
+    {label: 'File', submenu: [{role: 'quit'}]},
+    {label: 'Edit', submenu: [{role: 'undo'}, {role: 'redo'}, {type: 'separator'},
+      {role: 'cut'}, {role: 'copy'}, {role: 'paste'}, {role: 'selectAll'}]},
+    {label: 'View', submenu: [{role: 'reload'}, {role: 'toggleDevTools'}]},
+    {label: 'Window', submenu: [
+      {label: 'Open HEX File...', click: async () => {
+        if( !mainWindow ) return;
+        let result = await dialog.showOpenDialog(mainWindow, {
+          properties: ['openFile'],
+          filters: [{name: 'HEX files', extensions: ['hex']}, {name: 'All files', extensions: ['*']}]
+        });
+        if( !result.canceled && result.filePaths[0] )
+          mainWindow.webContents.send('projectabe:open-hex', result.filePaths[0]);
+      }},
+      {role: 'minimize'}, {role: 'close'}
+    ]}
+  ]));
 
   // mainWindow.webContents.openDevTools();
 
