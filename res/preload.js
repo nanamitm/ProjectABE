@@ -59,8 +59,9 @@ contextBridge.exposeInMainWorld('projectabe', {
             const child = childProcess.spawn(command, args);
             let stdout = '';
             let stderr = '';
-            child.stdout.on('data', data => { stdout += data.toString(); });
-            child.stderr.on('data', data => { stderr += data.toString(); });
+            if( child.stdout ) child.stdout.on('data', data => { stdout += data.toString(); });
+            if( child.stderr ) child.stderr.on('data', data => { stderr += data.toString(); });
+            child.on('error', error => resolve({code: -1, stdout, stderr: stderr + error.toString()}));
             child.on('close', code => resolve({code, stdout, stderr}));
         })
     }

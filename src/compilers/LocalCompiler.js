@@ -55,9 +55,14 @@ class LocalCompiler {
 	if( this.compilerPath ) return this.compilerPath;
 
 	let cliCandidates = [];
-	if( process.env.programfiles )
-	    cliCandidates.push(PATH.resolve(process.env.programfiles,
+	let programFiles = process.env.ProgramFiles || process.env.programfiles;
+	let localAppData = process.env.LOCALAPPDATA || process.env.localappdata;
+	if( programFiles )
+	    cliCandidates.push(PATH.resolve(programFiles,
 		'Arduino IDE/resources/app/lib/backend/resources/arduino-cli' + (process.platform == 'win32' ? '.exe' : '')));
+	if( localAppData )
+	    cliCandidates.push(PATH.resolve(localAppData,
+		'Programs/Arduino IDE/resources/app/lib/backend/resources/arduino-cli' + (process.platform == 'win32' ? '.exe' : '')));
 	cliCandidates.push('arduino-cli' + (process.platform == 'win32' ? '.exe' : ''));
 	for( let candidate of cliCandidates ){
 	    if( candidate.indexOf(PATH.sep) == -1 || fs.existsSync(candidate) ){
@@ -70,8 +75,8 @@ class LocalCompiler {
 
 	let ext = this.compilerExt;
 	let queue = [PATH.resolve('.'), ...process.env.PATH.split(PATH.delimiter)];
-	if( process.env.programfiles ){
-	    queue.push(process.env.programfiles + PATH.sep + 'arduino');
+	if( programFiles ){
+	    queue.push(programFiles + PATH.sep + 'arduino');
 	}else if( process.platform == 'darwin' ){
 	    queue.push('/Applications');
 	    queue.push(os.homedir() + '/Applications');
