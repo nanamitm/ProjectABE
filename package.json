@@ -15,14 +15,12 @@
     "watch:electron": "node scripts/watch-electron.js"
   },
   "dependencies": {
-    "avrgirl-arduino": "^2.2.7",
-    "cordova": "^8.0.0",
+    "cordova": "13.0.0",
     "dry-di": "^0.5.9",
     "electron": "43.0.0",
     "electron-builder": "26.15.3",
     "html5-fs": "^0.1.1",
-    "isomorphic-fetch": "^2.2.1",
-    "jszip": "^3.1.5",
+    "jszip": "3.10.1",
     "localforage": "^1.5.0",
     "minimist": "^1.2.0"
   },
