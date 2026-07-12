@@ -397,6 +397,41 @@ void loop() {
 	return cb( filePath, lsp );
     }
 
+    initWatches(){
+	if( !this.fileWatchers ) this.fileWatchers = {};
+	for( let file in this.fileWatchers ){
+	    try{ this.fileWatchers[file].close(); }catch( ex ){}
+	}
+	this.fileWatchers = {};
+    }
+
+    watchFile( file, callback ){
+	if( !this.fileWatchers ) this.initWatches();
+	if( this.fileWatchers[file] ){
+	    try{ this.fileWatchers[file].close(); }catch( ex ){}
+	}
+
+	let lsp = this.model.getItem("ram.localSourcePath", "");
+	let name = file;
+	if( lsp && file.indexOf(lsp + path.sep) === 0 )
+	    name = file.substr(lsp.length + 1);
+	name = name.replace(/\\/g, "/");
+
+	let pending = 0;
+	let read = _ => {
+	    if( pending ) return;
+	    pending = setTimeout(_ => {
+		pending = 0;
+		fs.readFile(file, "utf-8", (err, text) => {
+		    if( !err ) callback(name, text);
+		});
+	    }, 50);
+	};
+
+	read();
+	this.fileWatchers[file] = fs.watch(file, _ => read());
+    }
+
     deleteFile(){
 	if( !this.initSource() ) return;
 
