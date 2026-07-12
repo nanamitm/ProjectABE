@@ -18,9 +18,9 @@ For the desktop build, use Electron:
 
     npm run build:electron
 
-The generated desktop files are placed in `build`. The Electron migration is
-being done incrementally; the current desktop renderer still uses the legacy
-Electron `remote` API and will be migrated to preload/IPC in a later step.
+The generated desktop files are placed in `build`. Desktop-only values such as
+the command-line arguments and user-data directory are exposed to the renderer
+through a small preload/IPC bridge.
 
 
 # Running the emulator

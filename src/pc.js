@@ -11,14 +11,10 @@ import * as components from './components/*.js';
 
 import Flasher from './flashers/AVRGirl.js';
 
-const electron = window.require('electron');
 const fs = window.require('fs');
-
-electron.webFrame.registerURLSchemeAsPrivileged('file', { bypassCSP: true });
-
-const remote = electron.remote;
-const argv = remote.getGlobal('argv');
-const file = argv.slice(2).find(arg => !/^--/.test(arg));
+const runtime = window.projectabe || {};
+const argv = runtime.argv || [];
+const file = argv.find(arg => !/^--/.test(arg));
 
 document.addEventListener( "DOMContentLoaded", () => {
 

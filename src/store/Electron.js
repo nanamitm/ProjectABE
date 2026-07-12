@@ -4,10 +4,7 @@ let IStore = require('./IStore.js');
 if( window.require ){
 
     var fs = window.require('fs');
-    var { remote:{app} } = window.require('electron');
-
-    var {webFrame} = window.require('electron');
-    webFrame.registerURLSchemeAsPrivileged('file', {});
+    var runtime = window.projectabe || {};
 
 }else{
 
@@ -55,10 +52,7 @@ class NodeStore extends IStore {
     constructor(){
         super();
 
-        if( app )
-            this.root = app.getPath("userData") + "/";
-        else
-            this.root = "";
+        this.root = runtime && runtime.userDataPath ? runtime.userDataPath + "/" : "";
 
         this.fs = fs;
 
