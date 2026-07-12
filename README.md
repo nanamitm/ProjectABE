@@ -1,9 +1,9 @@
 # ProjectABE
 ArduBoyEmulator and IDE in HTML5
 
-ProjectABEは、ブラウザ・Windows（Electron）・Androidで動作するArduboyエミュレーター兼IDEです。
+ProjectABE is an Arduboy emulator and IDE that runs in the browser, on Windows (Electron), and on Android.
 
-## 開発環境の準備
+## Development setup
 
 ```powershell
 git clone https://github.com/nanamitm/ProjectABE.git
@@ -11,21 +11,21 @@ cd ProjectABE
 npm install
 ```
 
-Node.js 20以降を推奨します。Arduino IDE 2.xを使ったローカルビルドでは、Arduino AVR Boardsと必要なライブラリもArduino IDE側にインストールしてください。
+Node.js 20 or later is recommended. For local builds with Arduino IDE 2.x, install Arduino AVR Boards and the required libraries in Arduino IDE first.
 
-## 補助ツール
+## Optional tools
 
     npm install -g gulp-cli
     npm install -g serve
     npm install -g cordova   # optional, for android build only
-ローカルWeb版を確認する場合:
+To preview the local web build:
 
 ```powershell
 npm run build:web
 npx serve build
 ```
 
-### Windows版（Electron）
+### Windows (Electron)
 
     npm run build:electron
 
@@ -57,14 +57,14 @@ The generated installer is unsigned unless electron-builder signing
 environment variables are configured. For a signed release, provide
 `CSC_LINK` and `CSC_KEY_PASSWORD` before running the installer build.
 
-署名なしのインストーラーはWindows SmartScreenの警告が表示されることがあります。動作確認だけなら、アンパック版の `dist-electron/win-unpacked` をインストール先へコピーして起動できます。
+The unsigned installer may trigger a Windows SmartScreen warning. For testing, you can copy the unpacked build from `dist-electron/win-unpacked` to an installation directory and run it directly.
 
 Web and mobile bundles can be built without Gulp:
 
     npm run build:web
     npm run build:mobile
 
-### Android版
+### Android
 
 The Android build is available with:
 
@@ -73,34 +73,34 @@ The Android build is available with:
 It requires Android SDK, JDK 17 or later, and Gradle or Android Studio. The
 Cordova Android platform is managed at version 15.x.
 
-接続した実機を確認してから、デバッグAPKを作成します。
+Check that the target device is connected, then build the debug APK.
 
 ```powershell
 adb devices
 npm run build:android
 ```
 
-デバッグAPKは通常、次に生成されます。
+The debug APK is normally generated at:
 
 ```text
 build/platforms/android/app/build/outputs/apk/debug/app-debug.apk
 ```
 
-実機へインストールする場合:
+To install it on a connected device:
 
 ```powershell
 adb install -r build/platforms/android/app/build/outputs/apk/debug/app-debug.apk
 ```
 
-### Web版の公開
+### Web deployment
 
-静的ファイルを `build` に生成します。
+Build the static files into `build`:
 
 ```powershell
 npm run build:web
 ```
 
-Cloudflare Pagesへ初回公開する場合:
+For the first deployment to Cloudflare Pages:
 
 ```powershell
 npx wrangler login
@@ -108,23 +108,23 @@ npx wrangler pages project create projectabe --production-branch master
 npx wrangler pages deploy build --project-name projectabe
 ```
 
-2回目以降はビルド後にデプロイだけ実行します。
+For subsequent deployments, build and deploy the output:
 
 ```powershell
 npm run build:web
 npx wrangler pages deploy build --project-name projectabe
 ```
 
-現在の公開URLは [https://projectabe.pages.dev/](https://projectabe.pages.dev/) です。`functions/api/cors.js` もPages Functionsとして同時に公開され、外部リポジトリ取得時のCORSプロキシとして使用されます。
+The current public URL is [https://projectabe.pages.dev/](https://projectabe.pages.dev/). `functions/api/cors.js` is deployed as a Pages Function and provides the CORS proxy used when loading external repositories.
 
-## 配布前チェック
+## Distribution checklist
 
-1. 起動してエミュレーター画面が表示される
-2. `New Game` でプロジェクト名ダイアログが表示される
-3. ソース編集後に保存される
-4. HEXファイルの読み込みとダウンロードができる
-5. WindowsではBuild、AndroidではAPK起動、Webでは外部リポジトリ読み込みを確認する
-6. 配布物に不要な過去プロジェクトのソースが含まれていない
+1. Launch the app and verify that the emulator screen is displayed.
+2. Verify that `New Game` opens the project name dialog.
+3. Edit source code and verify that it is saved.
+4. Verify HEX file loading and downloading.
+5. Verify Windows builds, Android APK startup, and external repository loading on the web.
+6. Verify that distribution packages do not include source files from unrelated previous projects.
 
 
 # Running the emulator
