@@ -49,11 +49,7 @@ app.on('ready', function() {
   });
 
   Menu.setApplicationMenu(Menu.buildFromTemplate([
-    {label: 'File', submenu: [{role: 'quit'}]},
-    {label: 'Edit', submenu: [{role: 'undo'}, {role: 'redo'}, {type: 'separator'},
-      {role: 'cut'}, {role: 'copy'}, {role: 'paste'}, {role: 'selectAll'}]},
-    {label: 'View', submenu: [{role: 'reload'}, {role: 'toggleDevTools'}]},
-    {label: 'Window', submenu: [
+    {label: 'File', submenu: [
       {label: 'Open HEX File...', click: async () => {
         if( !mainWindow ) return;
         let result = await dialog.showOpenDialog(mainWindow, {
@@ -63,8 +59,13 @@ app.on('ready', function() {
         if( !result.canceled && result.filePaths[0] )
           mainWindow.webContents.send('projectabe:open-hex', result.filePaths[0]);
       }},
-      {role: 'minimize'}, {role: 'close'}
-    ]}
+      {type: 'separator'},
+      {role: 'quit'}
+    ]},
+    {label: 'Edit', submenu: [{role: 'undo'}, {role: 'redo'}, {type: 'separator'},
+      {role: 'cut'}, {role: 'copy'}, {role: 'paste'}, {role: 'selectAll'}]},
+    {label: 'View', submenu: [{role: 'reload'}, {role: 'toggleDevTools'}]},
+    {label: 'Window', submenu: [{role: 'minimize'}, {role: 'close'}]}
   ]));
 
   // mainWindow.webContents.openDevTools();
