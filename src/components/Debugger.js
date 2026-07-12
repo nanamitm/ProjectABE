@@ -595,13 +595,25 @@ void loop() {
 		    ], document.body));
 		    this.saver = dom.index("id");		    
 		    
-		}else
-		    URL.revokeObjectURL( this.saver.href );
+		}else{
+		    if( this.saver.zip.href ) URL.revokeObjectURL( this.saver.zip.href );
+		    if( this.saver.hex.href ) URL.revokeObjectURL( this.saver.hex.href );
+		}
 				
 		this.saver.zip.href = URL.createObjectURL( content );
-		this.saver.hex.href = URL.createObjectURL(
-		    new Blob( [ this.source.getItem(["build.hex"]) ], {type:"text/x-hex"} )
-		);
+		let hex = this.source.getItem(["build.hex"],
+		    this.model.getItem("app.AT32u4.hex", ""));
+		if( typeof hex == "string" && hex.trim() ){
+		    this.saver.hex.textContent = "HEX";
+		    this.saver.hex.setAttribute("download", "ArduboyProject.hex");
+		    this.saver.hex.href = URL.createObjectURL(
+			new Blob( [hex], {type:"text/x-hex"} )
+		    );
+		}else{
+		    this.saver.hex.textContent = "HEX (Build first)";
+		    this.saver.hex.removeAttribute("href");
+		    this.saver.hex.removeAttribute("download");
+		}
 		this.saver.el.style.display = "block";
 		
 	    });	
