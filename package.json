@@ -6,6 +6,7 @@
   "scripts": {
     "test": "gulp test",
     "build:electron": "node scripts/build-electron.js",
+    "test:electron": "npm run build:electron && node scripts/smoke-electron.js",
     "watch:electron": "gulp electron-watch"
   },
   "dependencies": {
