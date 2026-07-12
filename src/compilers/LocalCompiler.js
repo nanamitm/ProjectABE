@@ -37,7 +37,7 @@ class LocalCompiler {
 	}
 
 	dirs.forEach( p => {
-	    if( p.toLowerCase() == 'libraries' ) return;
+	    if( !p || p.toLowerCase() == 'libraries' || p.toLowerCase() == 'null' ) return;
 	    let fp = sketchDir + PATH.sep + p;
 	    try{
 		fp = fs.readlinkSync(fp);

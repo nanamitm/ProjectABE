@@ -173,6 +173,9 @@ class Debugger {
 
 	}else if( !Object.keys(this.source.data).length ){
 	    let name = prompt("Project Name:");
+	    if( !name || !name.trim() )
+		return;
+	    name = name.trim();
 	    lsp = '';
 	    if( fs ){
 		lsp = this.compiler.getSketchDir() + `/${name}`;
