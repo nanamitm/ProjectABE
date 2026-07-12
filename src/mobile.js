@@ -18,6 +18,9 @@ document.addEventListener( "deviceready", () => {
     bind(CordovaStore).to(IStore).singleton();
     bind(CloudCompiler).to('Compiler').singleton();
 
+    class Dud {};
+    bind(Dud).to('Plugin').singleton();
+
     boot({
         main:App,
         element:document.body,
