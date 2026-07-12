@@ -424,7 +424,9 @@ void loop() {
 	
 	if( typeof target !== "string" ){
 	    askText("Rename " + shortCurrent + " to:", shortCurrent)
-		.then(name => this.renameFile(name));
+		.then(name => {
+		    if( name !== null ) this.renameFile(name);
+		});
 	    return;
 	}
 	target = target.trim();
@@ -477,7 +479,9 @@ void loop() {
 	if( !this.initSource() ) return;
 
 	if( typeof target !== "string" ){
-	    askFileName().then(name => this.addNewFile(name, content, disableSave));
+	    askFileName().then(name => {
+		if( name !== null ) this.addNewFile(name, content, disableSave);
+	    });
 	    return;
 	}
 	
