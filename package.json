@@ -6,6 +6,8 @@
   "scripts": {
     "test": "gulp test",
     "build:electron": "node scripts/build-electron.js",
+    "build:web": "node scripts/build-target.js web",
+    "build:mobile": "node scripts/build-target.js mobile",
     "test:electron": "npm run build:electron && node scripts/smoke-electron.js",
     "package:electron": "npm run build:electron && electron-builder --projectDir build --config ..\\electron-builder.yml --dir",
     "package:electron:installer": "npm run build:electron && electron-builder --projectDir build --config ..\\electron-builder.yml --win nsis",
