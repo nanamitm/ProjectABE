@@ -43,6 +43,8 @@ contextBridge.exposeInMainWorld('projectabe', {
     userDataPath: ipcRenderer.sendSync('projectabe:get-user-data-path'),
     path: pathApi,
     fs: fsApi,
+    resizeWindow: (width, height) => ipcRenderer.send('projectabe:resize-window', width, height),
+    openExternal: url => ipcRenderer.send('projectabe:open-external', url),
     compiler: {
         process: {
             platform: process.platform,

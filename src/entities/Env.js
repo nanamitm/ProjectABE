@@ -157,8 +157,12 @@ class Env extends IController {
     }
 
     embed( dom, evt ){
-	if( dom && evt )
-	    this.pool.call("embed", evt.target.dataset.url);
+	if( !dom || !evt ) return;
+	let url = evt.target.dataset.url;
+	if( window.projectabe && window.projectabe.openExternal )
+	    window.projectabe.openExternal(url);
+	else
+	    this.pool.call("embed", url);
     }
 
     preview( opt ){

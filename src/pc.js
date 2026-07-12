@@ -14,8 +14,10 @@ import Flasher from './flashers/AVRGirl.js';
 
 const runtime = window.projectabe || {};
 const fs = runtime.fs;
+const path = runtime.path;
 const argv = runtime.argv || [];
-const file = argv.find(arg => !/^--/.test(arg));
+const input = argv.find(arg => !/^--/.test(arg));
+const skinArg = argv.find(arg => /^--skin=/.test(arg));
 
 document.addEventListener( "DOMContentLoaded", () => {
 
@@ -25,9 +27,12 @@ document.addEventListener( "DOMContentLoaded", () => {
 
 //    console.log( argv );
 
-    let url, app;
-    
-    if( file && !/.*\.js$/.test(file) ){
+    let url, app, skin = skinArg ? skinArg.substr(7) : null;
+
+	if( input && /^https?:\/\//i.test(input) ){
+	url = input;
+    }else if( input && !/.*\.js$/.test(input) ){
+	let file = path.resolve(input);
 	let hnd = 0;
 	let watcher;
 
@@ -36,10 +41,7 @@ document.addEventListener( "DOMContentLoaded", () => {
 	    if( watcher )
 		watcher.close();
 
-	    watcher = fs.watch(
-        file,
-		{ persistent:false },
-		_ => {
+	watcher = fs.watch(file, _ => {
 		    if( hnd ) clearTimeout(hnd);
 		    hnd = setTimeout(
 			_=>{
@@ -50,7 +52,7 @@ document.addEventListener( "DOMContentLoaded", () => {
 			},
 			1000
 		    );
-		});
+	});
 	    
 	}
 
@@ -65,6 +67,8 @@ document.addEventListener( "DOMContentLoaded", () => {
 	    if( /^https?%/.test(url) )
 		url = decodeURIComponent(url);
 	}
+	let querySkin = location.search.match(/[?&]skin=([^&]+)/);
+	if( querySkin ) skin = decodeURIComponent(querySkin[1]);
     }
 
     app = boot({
@@ -76,7 +80,9 @@ document.addEventListener( "DOMContentLoaded", () => {
 	    ram:{
 		autoRun: url,
 		hasFlasher: true,
-	    debuggerEnabled: true
+		debuggerEnabled: true,
+		skin,
+		isNativeBuild: true
 	    }
 	}
     });

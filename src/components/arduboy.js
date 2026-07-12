@@ -213,6 +213,8 @@ class Arduboy {
 
 	this.skin = skin;
 	this.width = 0;
+	if( window.projectabe && window.projectabe.resizeWindow && skin.width && skin.height )
+	    window.projectabe.resizeWindow(skin.width, skin.height);
 	document.body.style.background = skin.background;
 	this.pool.call( "CRTFade", skin.CRTFade );
 

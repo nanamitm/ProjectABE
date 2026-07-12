@@ -1,5 +1,5 @@
 const path = require('path');
-const {app, BrowserWindow, ipcMain} = require('electron');
+const {app, BrowserWindow, ipcMain, shell} = require('electron');
 
 let mainWindow;
 
@@ -11,6 +11,16 @@ ipcMain.on('projectabe:get-argv', event => {
 
 ipcMain.on('projectabe:get-user-data-path', event => {
   event.returnValue = app.getPath('userData');
+});
+
+ipcMain.on('projectabe:resize-window', (event, width, height) => {
+  if( mainWindow && Number.isFinite(width) && Number.isFinite(height) )
+    mainWindow.setContentSize(Math.max(320, width), Math.max(240, height));
+});
+
+ipcMain.on('projectabe:open-external', (event, url) => {
+  if( typeof url === 'string' && /^https?:\/\//i.test(url) )
+    shell.openExternal(url);
 });
 
 // Quit when all windows are closed.
