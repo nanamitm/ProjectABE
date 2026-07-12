@@ -172,18 +172,16 @@ class Debugger {
 	    setTimeout( _ => readDir( lsp ), 100 );
 
 	}else if( !Object.keys(this.source.data).length ){
-	    let name = prompt("Project Name:");
-	    if( !name || !name.trim() )
-		return;
-	    name = name.trim();
-	    lsp = '';
-	    if( fs ){
-		lsp = this.compiler.getSketchDir() + `/${name}`;
-		this.model.setItem("ram.localSourcePath", lsp);
-	    }
+	    promise = askProjectName().then( name => {
+		if( !name ) return;
+		lsp = '';
+		if( fs ){
+		    lsp = this.compiler.getSketchDir() + `/${name}`;
+		    this.model.setItem("ram.localSourcePath", lsp);
+		}
 
-	    this.addNewFile(
-		`${name}.ino`,
+		this.addNewFile(
+		    `${name}.ino`,
 `
 
 // See: https://mlxxxp.github.io/documents/Arduino/libraries/Arduboy2/Doxygen/html/
@@ -210,7 +208,8 @@ void loop() {
   arduboy.display();
 }
 `
-	    );
+		);
+	    });
 	}
 
 	
@@ -229,7 +228,7 @@ void loop() {
 
 	return true;
 	
-    }
+}
 
     showDebugger(){
 	this.DOM.element.setAttribute("hidden", "false");
@@ -1689,5 +1688,29 @@ void loop() {
     }
     
 };
+
+function askProjectName(){
+    return new Promise( resolve => {
+	let overlay = document.createElement('div');
+	overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:10000;display:flex;align-items:center;justify-content:center';
+	let box = document.createElement('div');
+	box.style.cssText = 'background:#34495e;color:white;padding:24px;min-width:320px;font:16px sans-serif;box-shadow:0 4px 20px #000';
+	box.innerHTML = '<div style="margin-bottom:12px">Project Name:</div><input style="width:100%;box-sizing:border-box;font-size:16px;padding:6px"><div style="text-align:right;margin-top:16px"><button data-cancel>Cancel</button> <button data-ok>OK</button></div>';
+	overlay.appendChild(box);
+	document.body.appendChild(overlay);
+	let input = box.querySelector('input');
+	let finish = value => {
+	    overlay.remove();
+	    resolve(value && value.trim() || null);
+	};
+	box.querySelector('[data-ok]').addEventListener('click', () => finish(input.value));
+	box.querySelector('[data-cancel]').addEventListener('click', () => finish(null));
+	input.addEventListener('keydown', event => {
+	    if( event.key == 'Enter' ) finish(input.value);
+	    if( event.key == 'Escape' ) finish(null);
+	});
+	input.focus();
+    });
+}
 
 export default Debugger;
