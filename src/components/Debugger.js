@@ -472,8 +472,10 @@ void loop() {
     addNewFile( target, content, disableSave ){
 	if( !this.initSource() ) return;
 
-	if( typeof target !== "string" )
-	    target = (prompt("File name:") || "").trim();
+	if( typeof target !== "string" ){
+	    askFileName().then(name => this.addNewFile(name, content, disableSave));
+	    return;
+	}
 	
 	if( target == "" ) return;
 
@@ -1689,13 +1691,13 @@ void loop() {
     
 };
 
-function askProjectName(){
+function askText(label){
     return new Promise( resolve => {
 	let overlay = document.createElement('div');
 	overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:10000;display:flex;align-items:center;justify-content:center';
 	let box = document.createElement('div');
 	box.style.cssText = 'background:#34495e;color:white;padding:24px;min-width:320px;font:16px sans-serif;box-shadow:0 4px 20px #000';
-	box.innerHTML = '<div style="margin-bottom:12px">Project Name:</div><input style="width:100%;box-sizing:border-box;font-size:16px;padding:6px"><div style="text-align:right;margin-top:16px"><button data-cancel>Cancel</button> <button data-ok>OK</button></div>';
+	box.innerHTML = '<div style="margin-bottom:12px">' + label + '</div><input style="width:100%;box-sizing:border-box;font-size:16px;padding:6px"><div style="text-align:right;margin-top:16px"><button data-cancel>Cancel</button> <button data-ok>OK</button></div>';
 	overlay.appendChild(box);
 	document.body.appendChild(overlay);
 	let input = box.querySelector('input');
@@ -1711,6 +1713,14 @@ function askProjectName(){
 	});
 	input.focus();
     });
+}
+
+function askProjectName(){
+    return askText('Project Name:');
+}
+
+function askFileName(){
+    return askText('File name:');
 }
 
 export default Debugger;
