@@ -412,7 +412,7 @@ void loop() {
 	this.changeSourceFile();
     }
 
-    renameFile(){
+    renameFile( target ){
 	if( !this.initSource() ) return;
 
 	let current = this.DOM.currentFile.value;
