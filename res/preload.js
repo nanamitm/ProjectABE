@@ -1,33 +1,65 @@
 const {contextBridge, ipcRenderer} = require('electron');
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
+const childProcess = require('child_process');
+
+const fsApi = {
+    mkdir: (filePath, callback) => fs.mkdir(filePath, callback),
+    readFile: (filePath, encoding, callback) => {
+        if( typeof encoding === 'function' )
+            return fs.readFile(filePath, encoding);
+        return fs.readFile(filePath, encoding, callback);
+    },
+    writeFile: (filePath, data, callback) => fs.writeFile(filePath, data, callback),
+    readdir: (filePath, callback) => fs.readdir(filePath, callback),
+    readdirSync: filePath => fs.readdirSync(filePath),
+    mkdirSync: filePath => fs.mkdirSync(filePath),
+    mkdtempSync: prefix => fs.mkdtempSync(prefix),
+    existsSync: filePath => fs.existsSync(filePath),
+    lstatSync: filePath => ({
+        isDirectory: () => fs.lstatSync(filePath).isDirectory()
+    }),
+    readlinkSync: filePath => fs.readlinkSync(filePath),
+    readFileSync: (filePath, encoding) => fs.readFileSync(filePath, encoding),
+    unlinkSync: filePath => fs.unlinkSync(filePath),
+    writeFileSync: (filePath, data) => fs.writeFileSync(filePath, data),
+    watch: (filePath, callback) => {
+        const watcher = fs.watch(filePath, callback);
+        return {close: () => watcher.close()};
+    }
+};
+
+const pathApi = {
+    sep: path.sep,
+    delimiter: path.delimiter,
+    normalize: value => path.normalize(value),
+    resolve: (...args) => path.resolve(...args),
+    dirname: value => path.dirname(value)
+};
 
 contextBridge.exposeInMainWorld('projectabe', {
     argv: ipcRenderer.sendSync('projectabe:get-argv'),
     userDataPath: ipcRenderer.sendSync('projectabe:get-user-data-path'),
-    path: {
-        sep: path.sep,
-        resolve: (...args) => path.resolve(...args)
-    },
-    fs: {
-        mkdir: (filePath, callback) => fs.mkdir(filePath, callback),
-        readFile: (filePath, encoding, callback) => {
-            if( typeof encoding === 'function' )
-                return fs.readFile(filePath, encoding);
-            return fs.readFile(filePath, encoding, callback);
+    path: pathApi,
+    fs: fsApi,
+    compiler: {
+        process: {
+            platform: process.platform,
+            env: {...process.env}
         },
-        writeFile: (filePath, data, callback) => fs.writeFile(filePath, data, callback),
-        readdir: (filePath, callback) => fs.readdir(filePath, callback),
-        mkdirSync: filePath => fs.mkdirSync(filePath),
-        existsSync: filePath => fs.existsSync(filePath),
-        lstatSync: filePath => ({
-            isDirectory: () => fs.lstatSync(filePath).isDirectory()
-        }),
-        unlinkSync: filePath => fs.unlinkSync(filePath),
-        writeFileSync: (filePath, data) => fs.writeFileSync(filePath, data),
-        watch: (filePath, callback) => {
-            const watcher = fs.watch(filePath, callback);
-            return {close: () => watcher.close()};
-        }
+        os: {
+            homedir: () => os.homedir()
+        },
+        path: pathApi,
+        fs: fsApi,
+        spawn: (command, args) => new Promise(resolve => {
+            const child = childProcess.spawn(command, args);
+            let stdout = '';
+            let stderr = '';
+            child.stdout.on('data', data => { stdout += data.toString(); });
+            child.stderr.on('data', data => { stderr += data.toString(); });
+            child.on('close', code => resolve({code, stdout, stderr}));
+        })
     }
 });
