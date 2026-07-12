@@ -36,6 +36,12 @@ To create an unpacked Windows distribution:
 
 The result is written to `dist-electron/win-unpacked`.
 
+To create the Windows installer:
+
+    npm run package:electron:installer
+
+The installer is written to `dist-electron`.
+
 
 # Running the emulator
 

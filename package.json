@@ -8,6 +8,7 @@
     "build:electron": "node scripts/build-electron.js",
     "test:electron": "npm run build:electron && node scripts/smoke-electron.js",
     "package:electron": "npm run build:electron && electron-builder --projectDir build --config ..\\electron-builder.yml --dir",
+    "package:electron:installer": "npm run build:electron && electron-builder --projectDir build --config ..\\electron-builder.yml --win nsis",
     "watch:electron": "node scripts/watch-electron.js"
   },
   "dependencies": {
