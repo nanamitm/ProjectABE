@@ -42,6 +42,10 @@ To create the Windows installer:
 
 The installer is written to `dist-electron`.
 
+The generated installer is unsigned unless electron-builder signing
+environment variables are configured. For a signed release, provide
+`CSC_LINK` and `CSC_KEY_PASSWORD` before running the installer build.
+
 
 # Running the emulator
 
