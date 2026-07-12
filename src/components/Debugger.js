@@ -1701,17 +1701,29 @@ function askText(label, initial){
 	overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:10000;display:flex;align-items:center;justify-content:center';
 	let box = document.createElement('div');
 	box.style.cssText = 'background:#34495e;color:white;padding:24px;min-width:320px;font:16px sans-serif;box-shadow:0 4px 20px #000';
-	box.innerHTML = '<div style="margin-bottom:12px">' + label + '</div><input style="width:100%;box-sizing:border-box;font-size:16px;padding:6px"><div style="text-align:right;margin-top:16px"><button data-cancel>Cancel</button> <button data-ok>OK</button></div>';
+	box.innerHTML = '<div style="margin-bottom:12px">' + label + '</div><input style="width:100%;box-sizing:border-box;font-size:16px;padding:6px"><div style="text-align:right;margin-top:16px"><button type="button" data-cancel>Cancel</button> <button type="button" data-ok>OK</button></div>';
 	overlay.appendChild(box);
 	document.body.appendChild(overlay);
 	let input = box.querySelector('input');
 	input.value = initial || '';
+	let closed = false;
 	let finish = value => {
-	    overlay.remove();
+	    if( closed ) return;
+	    closed = true;
+	    if( overlay.parentNode )
+		overlay.parentNode.removeChild(overlay);
 	    resolve(value && value.trim() || null);
 	};
-	box.querySelector('[data-ok]').addEventListener('click', () => finish(input.value));
-	box.querySelector('[data-cancel]').addEventListener('click', () => finish(null));
+	box.querySelector('[data-ok]').addEventListener('click', event => {
+	    event.preventDefault();
+	    event.stopPropagation();
+	    finish(input.value);
+	});
+	box.querySelector('[data-cancel]').addEventListener('click', event => {
+	    event.preventDefault();
+	    event.stopPropagation();
+	    finish(null);
+	});
 	input.addEventListener('keydown', event => {
 	    if( event.key == 'Enter' ) finish(input.value);
 	    if( event.key == 'Escape' ) finish(null);
