@@ -22,6 +22,14 @@ The generated desktop files are placed in `build`. Desktop-only values such as
 the command-line arguments and user-data directory are exposed to the renderer
 through a small preload/IPC bridge.
 
+To run the Electron checks:
+
+    npm run test:electron
+
+The desktop IDE uses the local compiler when Arduino IDE 2.x is installed. The
+bundled `arduino-cli` is detected automatically; Arduino AVR Boards must be
+installed in Arduino IDE for local builds.
+
 
 # Running the emulator
 
