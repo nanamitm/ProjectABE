@@ -178,6 +178,10 @@ class Debugger {
 	    promise = askProjectName().then( name => {
 		this.model.removeItem("ram.newProject");
 		if( !name ) return;
+		// Keep each new project in its own source model. Otherwise all
+		// projects share the temporary "null" model and ZIP exports mix files.
+		this.model.setItem("ram.srcpath", ["app", "sources", name]);
+		this.source = this.model.getModel(["app", "sources", name], true);
 		lsp = '';
 	if( fs ){
 	    lsp = this.compiler.getSketchDir() + `/${name}`;
