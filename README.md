@@ -14,6 +14,14 @@ ArduBoyEmulator and IDE in HTML5
     gulp web-build
     serve build
 
+For the desktop build, use Electron:
+
+    npm run build:electron
+
+The generated desktop files are placed in `build`. The Electron migration is
+being done incrementally; the current desktop renderer still uses the legacy
+Electron `remote` API and will be migrated to preload/IPC in a later step.
+
 
 # Running the emulator
 

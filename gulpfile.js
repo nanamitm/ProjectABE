@@ -22,7 +22,7 @@ gulp.task('clean', function() {
 });
 
 gulp.task('copy', function(){
-    gulp.src(['./res/**/*'])
+    return gulp.src(['./res/**/*'])
         .pipe(gulp.dest('build'))
         .pipe(reload());
 });
@@ -111,11 +111,7 @@ function swallowError (error) {
   this.emit('end')
 }
 
-gulp.task('build', function () {
-    throw "Deprecated. Use nw-build instead";
-    
-    var asar = require('asar');
-    
+gulp.task('electron-build', function () {
   var b = browserify({
     entries: './src/pc.js',
     debug: true
@@ -141,8 +137,12 @@ gulp.task('build', function () {
 	    })
 	})
     .pipe(fs.createWriteStream("build/app.js", {encoding:"UTF-8"}))
-    .on("error", swallowError);
+	.on("error", swallowError);
 });
+
+// Keep the historical task name as an alias while Electron becomes the
+// supported desktop runtime.
+gulp.task('build', ['electron-build']);
 
 gulp.task('nw-build', function () {
 
@@ -263,23 +263,29 @@ gulp.task('nw-watch', ['nw-build', 'copy'], function(){
     gulp.watch('./res/**/*', ['copy']);
 });
 
+gulp.task('electron-watch', ['electron-build', 'copy'], function(){
+    gulp.watch('./src/**/*', ['electron-build']);
+    gulp.watch('./res/**/*', ['copy']);
+});
+
 gulp.task('web-watch', ['web-build', 'copy'], function(){
     gulp.watch('./src/**/*', ['web-build']);
     gulp.watch('./res/**/*', ['copy']);
 });
 
-gulp.task('run', function(){
-  gulp.watch('./src/**/*', ['build']);
+gulp.task('electron-run', function(){
+  gulp.watch('./src/**/*', ['electron-build']);
   gulp.watch('./res/**/*', ['copy']);
 
   reload.listen();
 
-  execFile("node.exe", [
-    "c:\\Users\\felip\\AppData\\Roaming\\npm\\node_modules\\electron\\cli.js",
+  execFile(require.resolve('electron/cli.js'), [
     "electron.js"
     ], {cwd:"build"}, (err, stdout, stderr)=>{
       process.exit();
     });
 })
 
-gulp.task('default', sequence(['build', 'copy'], 'run'));
+gulp.task('electron', sequence('clean', 'copy', 'electron-build'));
+gulp.task('run', ['electron-run']);
+gulp.task('default', sequence(['electron-build', 'copy'], 'electron-run'));

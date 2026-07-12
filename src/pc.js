@@ -18,6 +18,7 @@ electron.webFrame.registerURLSchemeAsPrivileged('file', { bypassCSP: true });
 
 const remote = electron.remote;
 const argv = remote.getGlobal('argv');
+const file = argv.slice(2).find(arg => !/^--/.test(arg));
 
 document.addEventListener( "DOMContentLoaded", () => {
 
@@ -27,7 +28,7 @@ document.addEventListener( "DOMContentLoaded", () => {
 
     let url, app;
     
-    if( argv[1] && !/.*\.js$/.test(argv[1]) ){
+    if( file && !/.*\.js$/.test(file) ){
 	let hnd = 0;
 	let watcher;
 
@@ -37,7 +38,7 @@ document.addEventListener( "DOMContentLoaded", () => {
 		watcher.close();
 
 	    watcher = fs.watch(
-		argv[1],
+        file,
 		{ persistent:false },
 		_ => {
 		    if( hnd ) clearTimeout(hnd);
@@ -56,7 +57,7 @@ document.addEventListener( "DOMContentLoaded", () => {
 
 	watch();
 	
-	url = "file://" + argv[1].replace(/\\/g, "/");
+	url = "file://" + file.replace(/\\/g, "/");
 	
     }
 

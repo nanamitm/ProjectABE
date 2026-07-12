@@ -4,7 +4,9 @@
   "license": "MIT",
   "main": "electron.js",
   "scripts": {
-    "test": "gulp test"
+    "test": "gulp test",
+    "build:electron": "gulp electron",
+    "watch:electron": "gulp electron-watch"
   },
   "dependencies": {
     "avrgirl-arduino": "^2.2.7",
