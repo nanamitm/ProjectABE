@@ -175,10 +175,16 @@ class Debugger {
 	    promise = askProjectName().then( name => {
 		if( !name ) return;
 		lsp = '';
-		if( fs ){
-		    lsp = this.compiler.getSketchDir() + `/${name}`;
-		    this.model.setItem("ram.localSourcePath", lsp);
-		}
+	if( fs ){
+	    lsp = this.compiler.getSketchDir() + `/${name}`;
+	    try{
+		fs.mkdirSync(lsp, {recursive:true});
+	    }catch( err ){
+		alert("Unable to create project folder: " + err);
+		return;
+	    }
+	    this.model.setItem("ram.localSourcePath", lsp);
+	}
 
 		this.addNewFile(
 		    `${name}.ino`,
