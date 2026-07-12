@@ -46,6 +46,18 @@ The generated installer is unsigned unless electron-builder signing
 environment variables are configured. For a signed release, provide
 `CSC_LINK` and `CSC_KEY_PASSWORD` before running the installer build.
 
+Web and mobile bundles can be built without Gulp:
+
+    npm run build:web
+    npm run build:mobile
+
+The Android build is available with:
+
+    npm run build:android
+
+It requires Android SDK, JDK 17 or later, and Gradle or Android Studio. The
+Cordova Android platform is managed at version 15.x.
+
 
 # Running the emulator
 
