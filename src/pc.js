@@ -57,7 +57,14 @@ document.addEventListener( "DOMContentLoaded", () => {
 	watch();
 	
 	url = "file://" + file.replace(/\\/g, "/");
-	
+
+    }else{
+	let match = location.search.match(/[?&](?:file|hex|url)=([^&]+)/);
+	if( match ){
+	    url = match[1];
+	    if( /^https?%/.test(url) )
+		url = decodeURIComponent(url);
+	}
     }
 
     app = boot({
