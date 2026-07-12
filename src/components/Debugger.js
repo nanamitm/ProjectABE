@@ -110,6 +110,7 @@ class Debugger {
 
 	let srcurl = this.model.getItem("ram.srcurl", "");
 	let lsp = this.model.getItem("ram.localSourcePath", "");
+	let newProject = this.model.getItem("ram.newProject", false);
 
 	if( /.*\.ino$/.test(srcurl) ){
 	    
@@ -173,8 +174,9 @@ class Debugger {
 
 	    setTimeout( _ => readDir( lsp ), 100 );
 
-	}else if( !Object.keys(this.source.data).length ){
+	}else if( newProject || !Object.keys(this.source.data).length ){
 	    promise = askProjectName().then( name => {
+		this.model.removeItem("ram.newProject");
 		if( !name ) return;
 		lsp = '';
 	if( fs ){
