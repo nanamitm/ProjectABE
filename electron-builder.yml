@@ -1,0 +1,6 @@
+appId: io.github.felipemanga.projectabe
+productName: ProjectABE
+directories:
+  output: ../dist-electron
+files:
+  - '**/*'

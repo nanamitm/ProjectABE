@@ -7,6 +7,7 @@
     "test": "gulp test",
     "build:electron": "node scripts/build-electron.js",
     "test:electron": "npm run build:electron && node scripts/smoke-electron.js",
+    "package:electron": "npm run build:electron && electron-builder --projectDir build --config ..\\electron-builder.yml --dir",
     "watch:electron": "node scripts/watch-electron.js"
   },
   "dependencies": {
@@ -14,7 +15,7 @@
     "cordova": "^8.0.0",
     "dry-di": "^0.5.9",
     "electron": "43.0.0",
-    "electron-builder": "^19.55.2",
+    "electron-builder": "26.15.3",
     "electron-rebuild": "^1.7.3",
     "html5-fs": "^0.1.1",
     "isomorphic-fetch": "^2.2.1",

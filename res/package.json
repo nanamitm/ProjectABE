@@ -1,0 +1,9 @@
+{
+  "name": "projectabe",
+  "productName": "ProjectABE",
+  "version": "0.6.8",
+  "description": "Arduboy emulator and IDE",
+  "author": "felipemanga",
+  "private": true,
+  "main": "electron.js"
+}

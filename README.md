@@ -30,6 +30,12 @@ The desktop IDE uses the local compiler when Arduino IDE 2.x is installed. The
 bundled `arduino-cli` is detected automatically; Arduino AVR Boards must be
 installed in Arduino IDE for local builds.
 
+To create an unpacked Windows distribution:
+
+    npm run package:electron
+
+The result is written to `dist-electron/win-unpacked`.
+
 
 # Running the emulator
 
