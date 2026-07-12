@@ -401,8 +401,12 @@ void loop() {
 	    try{
 		fs.unlinkSync(file);
 	    }catch( err ){
-		alert("Unable to delete: " + err);
-		return false;
+		// A project may contain an in-memory file whose disk copy was
+		// already removed. Treat that case as already deleted.
+		if( err.code !== "ENOENT" ){
+		    alert("Unable to delete: " + err);
+		    return false;
+		}
 	    }
 	} ) === false )
 	    return;
