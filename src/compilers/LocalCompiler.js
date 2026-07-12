@@ -121,6 +121,20 @@ class LocalCompiler {
 	    this.model.setItem("ram.localBuildPath", lbp);
 	}
 
+	// Arduino CLI requires the entry sketch passed on the command line to
+	// exist. Existing projects may use a different .ino name than the folder.
+	let mainPath = PATH.resolve(lsp, main);
+	if( !fs.existsSync(mainPath) ){
+	    let folderParts = lsp.split(/[\\/]+/);
+	    let folderName = folderParts[folderParts.length - 1].toLowerCase();
+	    let sketches = fs.readdirSync(lsp)
+		.filter(file => /\.ino$/i.test(file));
+	    let fallback = sketches.find(file =>
+		file.replace(/\.ino$/i, '').toLowerCase() == folderName
+	    ) || sketches[0];
+	    if( fallback ) main = fallback;
+	}
+
 	let args = this.useCli ? [ ...this.prefixArgs,
 	    'compile',
 	    '--fqbn', 'arduino:avr:leonardo',
