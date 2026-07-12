@@ -1,20 +1,31 @@
 # ProjectABE
 ArduBoyEmulator and IDE in HTML5
 
-## Want to contribute?
+ProjectABEは、ブラウザ・Windows（Electron）・Androidで動作するArduboyエミュレーター兼IDEです。
+
+## 開発環境の準備
+
+```powershell
+git clone https://github.com/nanamitm/ProjectABE.git
+cd ProjectABE
+npm install
+```
+
+Node.js 20以降を推奨します。Arduino IDE 2.xを使ったローカルビルドでは、Arduino AVR Boardsと必要なライブラリもArduino IDE側にインストールしてください。
+
+## 補助ツール
 
     npm install -g gulp-cli
     npm install -g serve
     npm install -g cordova   # optional, for android build only
-    git clone https://github.com/felipemanga/ProjectABE.git
-    cd ProjectABE
-    npm install
-    mkdir build
-    gulp copy
-    gulp web-build
-    serve build
+ローカルWeb版を確認する場合:
 
-For the desktop build, use Electron:
+```powershell
+npm run build:web
+npx serve build
+```
+
+### Windows版（Electron）
 
     npm run build:electron
 
@@ -46,10 +57,14 @@ The generated installer is unsigned unless electron-builder signing
 environment variables are configured. For a signed release, provide
 `CSC_LINK` and `CSC_KEY_PASSWORD` before running the installer build.
 
+署名なしのインストーラーはWindows SmartScreenの警告が表示されることがあります。動作確認だけなら、アンパック版の `dist-electron/win-unpacked` をインストール先へコピーして起動できます。
+
 Web and mobile bundles can be built without Gulp:
 
     npm run build:web
     npm run build:mobile
+
+### Android版
 
 The Android build is available with:
 
@@ -58,15 +73,68 @@ The Android build is available with:
 It requires Android SDK, JDK 17 or later, and Gradle or Android Studio. The
 Cordova Android platform is managed at version 15.x.
 
+接続した実機を確認してから、デバッグAPKを作成します。
+
+```powershell
+adb devices
+npm run build:android
+```
+
+デバッグAPKは通常、次に生成されます。
+
+```text
+build/platforms/android/app/build/outputs/apk/debug/app-debug.apk
+```
+
+実機へインストールする場合:
+
+```powershell
+adb install -r build/platforms/android/app/build/outputs/apk/debug/app-debug.apk
+```
+
+### Web版の公開
+
+静的ファイルを `build` に生成します。
+
+```powershell
+npm run build:web
+```
+
+Cloudflare Pagesへ初回公開する場合:
+
+```powershell
+npx wrangler login
+npx wrangler pages project create projectabe --production-branch master
+npx wrangler pages deploy build --project-name projectabe
+```
+
+2回目以降はビルド後にデプロイだけ実行します。
+
+```powershell
+npm run build:web
+npx wrangler pages deploy build --project-name projectabe
+```
+
+現在の公開URLは [https://projectabe.pages.dev/](https://projectabe.pages.dev/) です。`functions/api/cors.js` もPages Functionsとして同時に公開され、外部リポジトリ取得時のCORSプロキシとして使用されます。
+
+## 配布前チェック
+
+1. 起動してエミュレーター画面が表示される
+2. `New Game` でプロジェクト名ダイアログが表示される
+3. ソース編集後に保存される
+4. HEXファイルの読み込みとダウンロードができる
+5. WindowsではBuild、AndroidではAPK起動、Webでは外部リポジトリ読み込みを確認する
+6. 配布物に不要な過去プロジェクトのソースが含まれていない
+
 
 # Running the emulator
 
 The emulator can be used in one of the following ways:
-- Go to https://felipemanga.github.io/ProjectABE, pick a game and play.
+- Go to https://projectabe.pages.dev/, pick a game and play.
 - Download one of the offline builds [here](https://github.com/felipemanga/ProjectABE/releases) and run it.
 
 If you want to use the online emulator, you can run a HEX/Arduboy directly by adding it to the URL like this:
-https://felipemanga.github.io/ProjectABE/?url=https://site/file.hex
+https://projectabe.pages.dev/?url=https://site/file.hex
 
 Offline is similar, if you have the executable in your PATH:
 
