@@ -4,6 +4,13 @@ const process = runtime.process;
 const fs = runtime.fs;
 const os = runtime.os;
 
+function cleanCompilerOutput( value ){
+    return String(value || '')
+	.replace(/[\u001b\u009b]\[[0-?]*[ -\/]*[@-~]/g, '')
+	.replace(/\r\n/g, '\n')
+	.replace(/\r/g, '\n');
+}
+
 import { Model } from '../lib/mvc.js';
 import IStore from '../store/IStore.js';
 
@@ -164,7 +171,8 @@ class LocalCompiler {
 	];
 	return runtime.spawn(this.compilerExec, args).then(result => {
 	    if( restoreSketch ) restoreSketch();
-	    let output = args.join(" ") + '\n' + result.stdout + result.stderr;
+	let output = args.join(" ") + '\n' +
+	    cleanCompilerOutput(result.stdout) + cleanCompilerOutput(result.stderr);
 	    if( result.code ) throw output;
 
 	    let hexpath, elfpath;
